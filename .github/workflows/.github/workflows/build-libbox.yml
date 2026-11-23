@@ -1,0 +1,26 @@
+name: Build libbox
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show files
+        run: ls -R . | head -50
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: false
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Build libbox.aar
+        run: |
+          export ANDROID_HOME="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          bash -x scripts/build-libbox.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libbox
+          path: app/libs/libbox.aar
